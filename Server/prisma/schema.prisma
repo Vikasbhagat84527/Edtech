@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  userId    Int
+  lessonId  Int
+  createdAt DateTime @default(now())
+  Lesson    Lesson   @relation(fields: [lessonId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  subject     String
+  standard    Int
+  createdAt   DateTime @default(now())
+  Lesson      Lesson[]
+}
+
+model Lesson {
+  id         Int       @id @default(autoincrement())
+  title      String
+  contentUrl String
+  courseId   Int
+  createdAt  DateTime  @default(now())
+  Comment    Comment[]
+  Course     Course    @relation(fields: [courseId], references: [id])
+}
+
+model Subscription {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  startDate DateTime @default(now())
+  endDate   DateTime
+  active    Boolean  @default(true)
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+   id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  firstName   String
+  lastName    String
+  phoneNumber String?
+  location    String?
+  standard    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  refreshToken String?
+  Comment      Comment[]
+  Subscription Subscription[]
+}
