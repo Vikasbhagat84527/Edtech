@@ -5,6 +5,10 @@ const courseRoutes = require("./routes/courseRoutes");
 const lessonRoutes = require("./routes/lessonRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const commentRoutes = require("./routes/commentRoutes");
+const likedVideoRoutes = require("./routes/likedVideoRoutes");
+const bookmarkedVideoRoutes = require("./routes/bookmarkedVideoRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const watchHistoryRoutes = require("./routes/watchHistoryRoutes");
 require("dotenv").config();
 const prisma = require("../prisma/prismaClient");
 
@@ -18,11 +22,10 @@ app.use("/api", courseRoutes);
 app.use("/api", lessonRoutes);
 app.use("/api", subscriptionRoutes);
 app.use("/api", commentRoutes);
-
-app.get("/api/test", (req, res) => {
-  console.log("Test route hit");
-  res.json({ message: "Test route working" });
-});
+app.use("/api/likes", likedVideoRoutes);
+app.use("/api", dashboardRoutes);
+app.use("/api", bookmarkedVideoRoutes);
+app.use("/api", watchHistoryRoutes);
 
 app.listen(PORT, async () => {
   try {

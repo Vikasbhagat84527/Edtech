@@ -7,6 +7,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id               Int               @id @default(autoincrement())
+  email            String            @unique
+  password         String
+  firstName        String
+  lastName         String
+  phoneNumber      String
+  location         String?
+  standard         Int?
+  role             String            @default("user")
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  refreshToken     String?
+  Comment          Comment[]
+  Subscription     Subscription[]
+  likedVideos      LikedVideo[]
+  bookmarkedVideos BookmarkedVideo[]
+  watchHistory     WatchHistory[]
+}
+
 model Comment {
   id        Int      @id @default(autoincrement())
   content   String
@@ -28,13 +48,16 @@ model Course {
 }
 
 model Lesson {
-  id         Int       @id @default(autoincrement())
-  title      String
-  contentUrl String
-  courseId   Int
-  createdAt  DateTime  @default(now())
-  Comment    Comment[]
-  Course     Course    @relation(fields: [courseId], references: [id])
+  id                Int               @id @default(autoincrement())
+  title             String
+  contentUrl        String
+  courseId          Int
+  createdAt         DateTime          @default(now())
+  Comment           Comment[]
+  Course            Course            @relation(fields: [courseId], references: [id])
+  likedByUsers      LikedVideo[]
+  bookmarkedByUsers BookmarkedVideo[]
+  watchHistories    WatchHistory[]
 }
 
 model Subscription {
@@ -46,18 +69,32 @@ model Subscription {
   User      User     @relation(fields: [userId], references: [id])
 }
 
-model User {
-   id          Int      @id @default(autoincrement())
-  email       String   @unique
-  password    String
-  firstName   String
-  lastName    String
-  phoneNumber String?
-  location    String?
-  standard    Int?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  refreshToken String?
-  Comment      Comment[]
-  Subscription Subscription[]
+model LikedVideo {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lessonId  Int
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model BookmarkedVideo {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lessonId  Int
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model WatchHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lessonId  Int
+  watchedAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }

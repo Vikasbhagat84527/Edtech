@@ -29,6 +29,12 @@ const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
+const adminSignUpSchema = z.object({
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+});
 
 async function signUp(req, res) {
   try {
@@ -41,6 +47,7 @@ async function signUp(req, res) {
       phoneNumber,
       location,
       standard,
+      role,
     } = validatedData;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -58,6 +65,7 @@ async function signUp(req, res) {
         phoneNumber,
         location,
         standard,
+        role: role || "user",
       },
     });
     res.json({ message: "User registered successfully", user });
@@ -67,6 +75,37 @@ async function signUp(req, res) {
     } else {
       console.error("Error during user registration:", error);
       res.status(500).json({ error: "User registration failed" });
+    }
+  }
+}
+async function signUpAdmin(req, res) {
+  try {
+    // Validate the request body using Zod
+    const validatedData = adminSignUpSchema.parse(req.body);
+    const { email, password, firstName, lastName } = validatedData;
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const admin = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        role: "admin", // Assign admin role here
+      },
+    });
+    res.json({ message: "Admin registered successfully", admin });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ error: error.errors });
+    } else {
+      console.error("Error during admin registration:", error);
+      res.status(500).json({ error: "Admin registration failed" });
     }
   }
 }
@@ -145,4 +184,4 @@ async function logout(req, res) {
     res.status(500).json({ error: "Logout failed" });
   }
 }
-module.exports = { signUp, login, refreshToken, logout };
+module.exports = { signUp, login, refreshToken, logout, signUpAdmin };

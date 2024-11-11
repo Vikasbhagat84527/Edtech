@@ -54,5 +54,38 @@ async function getCourseById(req, res) {
     res.status(500).json({ error: "Failed to retrieve course" });
   }
 }
+async function updateCourse(req, res) {
+  const { courseId } = req.params;
+  const { title, description, subject, standard } = req.body;
 
-module.exports = { createCourse, getCourses, getCourseById };
+  try {
+    const updatedCourse = await prisma.course.update({
+      where: { id: parseInt(courseId) },
+      data: { title, description, subject, standard },
+    });
+    res.json({ message: "Course updated successfully", updatedCourse });
+  } catch (error) {
+    console.error("Error updating course:", error);
+    res.status(500).json({ error: "Failed to update course" });
+  }
+}
+async function deleteCourse(req, res) {
+  const { courseId } = req.params;
+
+  try {
+    await prisma.course.delete({
+      where: { id: parseInt(courseId) },
+    });
+    res.json({ message: "Course deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    res.status(500).json({ error: "Failed to delete course" });
+  }
+}
+module.exports = {
+  createCourse,
+  getCourses,
+  getCourseById,
+  updateCourse,
+  deleteCourse,
+};

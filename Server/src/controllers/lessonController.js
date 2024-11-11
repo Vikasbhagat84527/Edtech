@@ -45,4 +45,41 @@ async function getLessonById(req, res) {
   }
 }
 
-module.exports = { createLesson, getLessonsByCourseId, getLessonById };
+async function updateLesson(req, res) {
+  const { lessonId } = req.params;
+  const { title, contentUrl, courseId } = req.body;
+
+  try {
+    const updatedLesson = await prisma.lesson.update({
+      where: { id: parseInt(lessonId) },
+      data: { title, contentUrl, courseId },
+    });
+    res.json({ message: "Lesson updated successfully", updatedLesson });
+  } catch (error) {
+    console.error("Error updating lesson:", error);
+    res.status(500).json({ error: "Failed to update lesson" });
+  }
+}
+
+// Delete a specific lesson
+async function deleteLesson(req, res) {
+  const { lessonId } = req.params;
+
+  try {
+    await prisma.lesson.delete({
+      where: { id: parseInt(lessonId) },
+    });
+    res.json({ message: "Lesson deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting lesson:", error);
+    res.status(500).json({ error: "Failed to delete lesson" });
+  }
+}
+
+module.exports = {
+  createLesson,
+  getLessonsByCourseId,
+  getLessonById,
+  updateLesson,
+  deleteLesson,
+};
