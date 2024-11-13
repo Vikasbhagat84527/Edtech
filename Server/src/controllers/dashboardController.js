@@ -173,6 +173,13 @@ async function getAdminDashboard(req, res) {
       subject: lesson.subject,
       lessonCount: lesson._count.subject,
     }));
+    const feedbackEntries = await prisma.feedback.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 10, // Retrieve the latest 10 feedback entries
+    });
+    const notificationCount = await prisma.notification.count({
+      where: { isRead: false }, // Assuming a `read` field indicates unread notifications
+    });
 
     res.json({
       activeUsersCount,
@@ -180,6 +187,8 @@ async function getAdminDashboard(req, res) {
       lessonsCount,
       recentSubscriptions,
       lessonsBySubjectCount,
+      feedbackEntries,
+      notificationCount,
     });
   } catch (error) {
     console.error("Error fetching admin dashboard:", error);

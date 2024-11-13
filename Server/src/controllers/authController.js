@@ -65,7 +65,7 @@ async function signUp(req, res) {
         phoneNumber,
         location,
         standard,
-        role: role || "user",
+        role: role || "admin",
       },
     });
     res.json({ message: "User registered successfully", user });

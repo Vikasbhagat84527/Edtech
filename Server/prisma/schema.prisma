@@ -16,6 +16,7 @@ model User {
   phoneNumber      String
   location         String?
   standard         Int?
+  isActive         Boolean           @default(true)
   role             String            @default("user")
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
@@ -25,6 +26,7 @@ model User {
   likedVideos      LikedVideo[]
   bookmarkedVideos BookmarkedVideo[]
   watchHistory     WatchHistory[]
+  Feedback         Feedback[]
 }
 
 model Comment {
@@ -33,7 +35,7 @@ model Comment {
   userId    Int
   lessonId  Int
   createdAt DateTime @default(now())
-  Lesson    Lesson   @relation(fields: [lessonId], references: [id])
+  Lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   User      User     @relation(fields: [userId], references: [id])
 }
 
@@ -45,6 +47,7 @@ model Course {
   standard    Int
   createdAt   DateTime @default(now())
   Lesson      Lesson[]
+  Feedback    Feedback[]
 }
 
 model Lesson {
@@ -52,12 +55,14 @@ model Lesson {
   title             String
   contentUrl        String
   courseId          Int
+  subject           String            @default("Uncategorized")
   createdAt         DateTime          @default(now())
   Comment           Comment[]
   Course            Course            @relation(fields: [courseId], references: [id])
   likedByUsers      LikedVideo[]
   bookmarkedByUsers BookmarkedVideo[]
   watchHistories    WatchHistory[]
+  Feedback          Feedback[]
 }
 
 model Subscription {
@@ -98,3 +103,23 @@ model WatchHistory {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
+model Feedback {
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
+  userId     Int
+  courseId   Int?
+  lessonId   Int?
+
+  User       User     @relation(fields: [userId], references: [id])
+  Course     Course?  @relation(fields: [courseId], references: [id])
+  Lesson     Lesson?  @relation(fields: [lessonId], references: [id])
+}
+model Notification {
+  id         Int      @id @default(autoincrement())
+  message    String
+  type       String   // e.g., "feedback", "subscription", "issue"
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+

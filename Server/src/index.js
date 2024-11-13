@@ -9,6 +9,8 @@ const likedVideoRoutes = require("./routes/likedVideoRoutes");
 const bookmarkedVideoRoutes = require("./routes/bookmarkedVideoRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const watchHistoryRoutes = require("./routes/watchHistoryRoutes");
+const feedbackRoutes = require("./routes/feedbackRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 require("dotenv").config();
 const prisma = require("../prisma/prismaClient");
 
@@ -26,6 +28,8 @@ app.use("/api/likes", likedVideoRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", bookmarkedVideoRoutes);
 app.use("/api", watchHistoryRoutes);
+app.use("/api", feedbackRoutes);
+app.use("/api", notificationRoutes);
 
 app.listen(PORT, async () => {
   try {
