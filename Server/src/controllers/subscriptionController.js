@@ -2,12 +2,12 @@ const prisma = require("../../prisma/prismaClient");
 
 // Create a subscription
 async function createSubscription(req, res) {
-  console.log("createSubscription function called");
-  const { userId, endDate } = req.body;
+  const { userId, startDate, endDate } = req.body;
   try {
     const subscription = await prisma.subscription.create({
       data: {
         userId,
+        startDate,
         endDate,
         active: true,
       },

@@ -1,11 +1,12 @@
 const prisma = require("../../prisma/prismaClient");
 
 async function createLesson(req, res) {
-  const { title, contentUrl, courseId } = req.body;
+  const { title, description, contentUrl, courseId } = req.body;
   try {
     const lesson = await prisma.lesson.create({
       data: {
         title,
+        description,
         contentUrl,
         courseId: parseInt(courseId),
       },
@@ -47,12 +48,12 @@ async function getLessonById(req, res) {
 
 async function updateLesson(req, res) {
   const { lessonId } = req.params;
-  const { title, contentUrl, courseId } = req.body;
+  const { title, description, contentUrl, courseId } = req.body;
 
   try {
     const updatedLesson = await prisma.lesson.update({
       where: { id: parseInt(lessonId) },
-      data: { title, contentUrl, courseId },
+      data: { title, description, contentUrl, courseId },
     });
     res.json({ message: "Lesson updated successfully", updatedLesson });
   } catch (error) {

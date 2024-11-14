@@ -16,13 +16,6 @@ const signUpSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters long"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  phoneNumber: z.string(),
-  location: z.string().optional(),
-  standard: z
-    .number()
-    .int()
-    .min(1, "Standard must be at least 1")
-    .max(16, "Standard must be at most 16"),
 });
 
 const loginSchema = z.object({
@@ -39,16 +32,7 @@ const adminSignUpSchema = z.object({
 async function signUp(req, res) {
   try {
     const validatedData = signUpSchema.parse(req.body);
-    const {
-      email,
-      password,
-      firstName,
-      lastName,
-      phoneNumber,
-      location,
-      standard,
-      role,
-    } = validatedData;
+    const { email, password, firstName, lastName, role } = validatedData;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -62,9 +46,6 @@ async function signUp(req, res) {
         password: hashedPassword,
         firstName,
         lastName,
-        phoneNumber,
-        location,
-        standard,
         role: role || "admin",
       },
     });
@@ -96,7 +77,7 @@ async function signUpAdmin(req, res) {
         password: hashedPassword,
         firstName,
         lastName,
-        role: "admin", // Assign admin role here
+        role: "admin",
       },
     });
     res.json({ message: "Admin registered successfully", admin });

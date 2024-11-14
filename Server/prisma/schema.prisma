@@ -13,9 +13,6 @@ model User {
   password         String
   firstName        String
   lastName         String
-  phoneNumber      String
-  location         String?
-  standard         Int?
   isActive         Boolean           @default(true)
   role             String            @default("user")
   createdAt        DateTime          @default(now())
@@ -53,6 +50,7 @@ model Course {
 model Lesson {
   id                Int               @id @default(autoincrement())
   title             String
+  description       String?
   contentUrl        String
   courseId          Int
   subject           String            @default("Uncategorized")

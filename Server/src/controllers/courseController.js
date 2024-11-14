@@ -4,14 +4,13 @@ const prisma = require("../../prisma/prismaClient");
 
 // Create a new course
 async function createCourse(req, res) {
-  const { title, description, subject, standard } = req.body;
+  const { title, description, subject } = req.body;
   try {
     const course = await prisma.course.create({
       data: {
         title,
         description,
         subject,
-        standard,
       },
     });
     res.json({ message: "Course created successfully", course });
@@ -23,12 +22,11 @@ async function createCourse(req, res) {
 
 // Get all courses with optional filters
 async function getCourses(req, res) {
-  const { subject, standard } = req.query;
+  const { subject } = req.query;
   try {
     const courses = await prisma.course.findMany({
       where: {
         ...(subject && { subject }),
-        ...(standard && { standard: parseInt(standard) }),
       },
     });
     res.json(courses);
@@ -56,12 +54,11 @@ async function getCourseById(req, res) {
 }
 async function updateCourse(req, res) {
   const { courseId } = req.params;
-  const { title, description, subject, standard } = req.body;
-
+  const { title, description } = req.body;
   try {
     const updatedCourse = await prisma.course.update({
       where: { id: parseInt(courseId) },
-      data: { title, description, subject, standard },
+      data: { title, description },
     });
     res.json({ message: "Course updated successfully", updatedCourse });
   } catch (error) {
