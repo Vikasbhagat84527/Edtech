@@ -37,4 +37,4 @@ async function getAllFeedback(req, res) {
   }
 }
 
-module.exports = { submitFeedback, getFeedback, getAllFeedback };
+module.exports = { submitFeedback, getAllFeedback };

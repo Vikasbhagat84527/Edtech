@@ -5,8 +5,6 @@ async function getUserDashboard(req, res) {
     const userProfile = await prisma.user.findUnique({
       where: { id: userId },
       select: {
-        firstName: true,
-        lastName: true,
         email: true,
         Subscription: true,
         likedVideos: { include: { lesson: true } },

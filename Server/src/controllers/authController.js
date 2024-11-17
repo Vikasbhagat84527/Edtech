@@ -14,8 +14,6 @@ function generateRefreshToken(userId) {
 const signUpSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6, "Password must be at least 6 characters long"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
 });
 
 const loginSchema = z.object({
@@ -25,14 +23,12 @@ const loginSchema = z.object({
 const adminSignUpSchema = z.object({
   email: z.string().email("Invalid email format"),
   password: z.string().min(8, "Password must be at least 8 characters long"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
 });
 
 async function signUp(req, res) {
   try {
     const validatedData = signUpSchema.parse(req.body);
-    const { email, password, firstName, lastName, role } = validatedData;
+    const { email, password } = validatedData;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -44,9 +40,6 @@ async function signUp(req, res) {
       data: {
         email,
         password: hashedPassword,
-        firstName,
-        lastName,
-        role: role || "admin",
       },
     });
     res.json({ message: "User registered successfully", user });
@@ -63,7 +56,7 @@ async function signUpAdmin(req, res) {
   try {
     // Validate the request body using Zod
     const validatedData = adminSignUpSchema.parse(req.body);
-    const { email, password, firstName, lastName } = validatedData;
+    const { email, password } = validatedData;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -75,9 +68,6 @@ async function signUpAdmin(req, res) {
       data: {
         email,
         password: hashedPassword,
-        firstName,
-        lastName,
-        role: "admin",
       },
     });
     res.json({ message: "Admin registered successfully", admin });
