@@ -1,25 +1,39 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import React from "react";
 import { useRouter } from "next/navigation";
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
   const router = useRouter();
 
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: "/auth/login" });
-    router.push("/auth/login");
-  };
-
   return (
-    <nav className="bg-blue-500 text-white p-4 flex justify-between items-center">
-      <h1 className="text-lg font-bold">My Dashboard</h1>
-      <button
-        onClick={handleLogout}
-        className="bg-red-500 px-4 py-2 rounded hover:bg-red-600"
+    <nav className="bg-gray-800 text-white py-4 px-8 flex justify-between items-center">
+      <div
+        className="text-lg font-bold cursor-pointer"
+        onClick={() => router.push("/")}
       >
-        Logout
-      </button>
+        CompanyName
+      </div>
+      <div className="space-x-4">
+        <button
+          className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition"
+          onClick={() => router.push("/")}
+        >
+          Home
+        </button>
+        <button
+          className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition"
+          onClick={() => router.push("/auth/login")}
+        >
+          Login
+        </button>
+        <button
+          className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition"
+          onClick={() => router.push("/auth/signup")}
+        >
+          Signup
+        </button>
+      </div>
     </nav>
   );
 };

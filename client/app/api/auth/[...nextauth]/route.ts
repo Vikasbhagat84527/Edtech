@@ -6,6 +6,7 @@ import axiosInstance from "@/src/utils/axiosInstance";
 //import AppleProvider from "next-auth/providers/apple";
 
 export const authOptions: AuthOptions = {
+  debug: true,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -30,7 +31,7 @@ export const authOptions: AuthOptions = {
 
           const user = response.data;
 
-          // If user is valid, return user object
+          // If the backend validates the user, return user details
           if (user) {
             return {
               id: user.id,
@@ -39,11 +40,12 @@ export const authOptions: AuthOptions = {
             };
           }
           return null; // Return null if login fails
-        } catch (error) {
-          const errorMessage =
-            (error as any).response?.data?.error || "Login failed";
-          console.error("Login Error:", errorMessage);
-          throw new Error(errorMessage);
+        } catch (error: any) {
+          console.error(
+            "Authorize Error:",
+            error.response?.data || error.message
+          );
+          throw new Error("Login failed");
         }
       },
     }),

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-const Sidebar = () => {
+const DashboardSidebar = () => {
   return (
     <aside className="w-64 h-screen bg-gray-800 text-white p-4">
       <ul className="space-y-4">
@@ -35,4 +35,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default DashboardSidebar;

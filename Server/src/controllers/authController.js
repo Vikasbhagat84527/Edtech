@@ -103,7 +103,14 @@ async function login(req, res) {
       where: { id: user.id },
       data: { refreshToken },
     });
-    res.json({ message: "Login successful", accessToken, refreshToken });
+    res.json({
+      message: "Login successful",
+      id: user.id,
+      email: user.email,
+      name: user.name || user.email,
+      accessToken,
+      refreshToken,
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       res.status(400).json({ error: error.errors });

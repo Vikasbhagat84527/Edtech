@@ -14,6 +14,7 @@ const DashboardContent = () => {
       const accessToken = localStorage.getItem("accessToken");
 
       if (!accessToken) {
+        router.push("/auth/login");
         return;
       }
       try {
@@ -25,7 +26,7 @@ const DashboardContent = () => {
             },
           }
         );
-        setUserData(response.data);
+        setUserData(response.data.userProfile);
         if (response.status === 200) {
           router.push("/dashboard");
         }

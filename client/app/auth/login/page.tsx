@@ -10,7 +10,7 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession(); // Add `update` from NextAuth
   const router = useRouter();
 
   // Redirect to dashboard if the user is already authenticated
@@ -26,6 +26,7 @@ const AuthPage = () => {
 
     if (isLogin) {
       try {
+        // Send credentials to the backend for validation
         const response = await axiosInstance.post(
           "http://localhost:5000/auth/login",
           {
@@ -36,22 +37,24 @@ const AuthPage = () => {
 
         const { accessToken, refreshToken } = response.data;
 
-        // Store tokens in localStorage (or use cookies for better security)
+        // Store tokens in localStorage
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
 
-        // Redirect to the dashboard
-        const verifyResponse = await axiosInstance.get(
-          "http://localhost:5000/api/dashboard/user",
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        // Use NextAuth to sign in
+        const signInResponse = await signIn("credentials", {
+          redirect: false,
+          email,
+          password,
+          callbackUrl: "/dashboard",
+        });
 
-        if (verifyResponse.status === 200) {
-          router.push("/dashboard");
+        if (signInResponse?.error) {
+          setErrorMessage(signInResponse.error);
+        } else {
+          // Force session update to pick up the new cookies
+          await update(); // Refresh the NextAuth session
+          router.push("/dashboard"); // Redirect after successful session update
         }
       } catch (error: any) {
         setErrorMessage(
@@ -60,6 +63,7 @@ const AuthPage = () => {
       }
     } else {
       try {
+        // Signup logic
         const response = await axiosInstance.post(
           "http://localhost:5000/auth/signup",
           {
@@ -151,7 +155,7 @@ const AuthPage = () => {
           <p className="text-gray-600 mb-2">or</p>
           <button
             onClick={() => {
-              // Use next-auth for Google login
+              // Use NextAuth for Google login
               signIn("google");
             }}
             className="bg-green-500 w-full text-white py-2 px-4 rounded hover:bg-green-800"
