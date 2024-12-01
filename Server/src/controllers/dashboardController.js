@@ -6,6 +6,8 @@ async function getUserDashboard(req, res) {
       where: { id: userId },
       select: {
         email: true,
+        name: true,
+        profilePicture: true,
         Subscription: true,
         likedVideos: { include: { lesson: true } },
         bookmarkedVideos: { include: { lesson: true } },
@@ -23,6 +25,7 @@ async function getUserDashboard(req, res) {
     res.status(500).json({ error: "Failed to fetch user dashboard" });
   }
 }
+
 async function getAdminDashboard(req, res) {
   try {
     const activeUsersCount = await prisma.user.count({

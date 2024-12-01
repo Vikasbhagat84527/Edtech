@@ -1,28 +1,17 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import DashboardClient from "./DashboardClient";
-import DashboardSidebar from "@/src/components/DashboardSidebar";
-import DashboardNavbar from "@/src/components/DashboardNavbar";
-import DashboardContent from "@/src/components/DashboardContent";
-import { redirect } from "next/navigation";
+import React from "react";
+import UserSection from "@/src/components/UserDashboard/UserSection";
+import DashboardContent from "@/src/components/UserDashboard/DashboardContent";
 
-export default async function Dashboard() {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect("/auth/login");
-  }
-
+const DashboardPage: React.FC = () => {
   return (
-    <div>
-      <DashboardClient session={session} />
-      <div className="flex">
-        <DashboardSidebar />
-        <div className="flex-1">
-          <DashboardNavbar />
-          <DashboardContent />
-        </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto p-8">
+        <h1 className="text-3xl font-bold mb-6">My Dashboard</h1>
+        <UserSection />
+        <DashboardContent />
       </div>
     </div>
   );
-}
+};
+
+export default DashboardPage;

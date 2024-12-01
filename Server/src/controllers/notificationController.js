@@ -1,18 +1,5 @@
 const prisma = require("../../prisma/prismaClient");
 
-// Create a notification
-async function createNotification(message, type) {
-  try {
-    await prisma.notification.create({
-      data: { message, type },
-    });
-    console.log("Notification created:", message);
-  } catch (error) {
-    console.error("Error creating notification:", error);
-  }
-}
-
-// Fetch unread notifications for admin
 async function getUnreadNotifications(req, res) {
   try {
     const notifications = await prisma.notification.findMany({
@@ -25,7 +12,6 @@ async function getUnreadNotifications(req, res) {
   }
 }
 
-// Mark a notification as read
 async function markNotificationAsRead(req, res) {
   const { notificationId } = req.params;
   try {
@@ -39,7 +25,6 @@ async function markNotificationAsRead(req, res) {
   }
 }
 
-// Fetch unread and read notification counts
 async function getNotificationCounts(req, res) {
   try {
     const unreadCount = await prisma.notification.count({
@@ -55,7 +40,6 @@ async function getNotificationCounts(req, res) {
 }
 
 module.exports = {
-  createNotification,
   getUnreadNotifications,
   markNotificationAsRead,
   getNotificationCounts,

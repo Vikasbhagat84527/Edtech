@@ -54,7 +54,6 @@ async function signUp(req, res) {
 }
 async function signUpAdmin(req, res) {
   try {
-    // Validate the request body using Zod
     const validatedData = adminSignUpSchema.parse(req.body);
     const { email, password } = validatedData;
 
@@ -98,16 +97,22 @@ async function login(req, res) {
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
 
-    // Store the refresh token in the database
     await prisma.user.update({
       where: { id: user.id },
       data: { refreshToken },
     });
+
+    const name = user.name || email.split("@")[0];
+    const profilePicture =
+      user.profilePicture ||
+      "https://your-placeholder-image-url.com/default-avatar.png";
+
     res.json({
       message: "Login successful",
       id: user.id,
       email: user.email,
-      name: user.name || user.email,
+      name,
+      profilePicture,
       accessToken,
       refreshToken,
     });
@@ -136,7 +141,6 @@ async function refreshToken(req, res) {
       return res.status(403).json({ error: "Invalid refresh token" });
     }
 
-    // Generate a new access token
     const accessToken = generateAccessToken(user.id);
     res.json({ accessToken });
   } catch (error) {
@@ -144,6 +148,22 @@ async function refreshToken(req, res) {
     res.status(403).json({ error: "Token refresh failed" });
   }
 }
+
+async function validateToken(req, res) {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ error: "Token is required" });
+  }
+
+  try {
+    jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json({ message: "Token is valid" });
+  } catch (error) {
+    res.status(401).json({ error: "Invalid or expired token" });
+  }
+}
+
 async function logout(req, res) {
   const { userId } = req.body;
 
@@ -162,4 +182,11 @@ async function logout(req, res) {
     res.status(500).json({ error: "Logout failed" });
   }
 }
-module.exports = { signUp, login, refreshToken, logout, signUpAdmin };
+module.exports = {
+  signUp,
+  login,
+  refreshToken,
+  logout,
+  signUpAdmin,
+  validateToken,
+};

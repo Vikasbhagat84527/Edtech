@@ -1,16 +1,30 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axiosInstance from "@/src/utils/axiosInstance";
-//import FacebookProvider from "next-auth/providers/facebook";
-//import AppleProvider from "next-auth/providers/apple";
 
+declare module "next-auth" {
+  interface Profile {
+    picture?: string;
+  }
+}
 export const authOptions: AuthOptions = {
-  debug: true,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID as string,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
+      authorization: {
+        url: "https://www.facebook.com/v10.0/dialog/oauth",
+        params: {
+          auth_type: "reauthenticate", // Forces Facebook to show the login prompt
+          scope: "email,public_profile", // Request additional scopes as needed
+        },
+      },
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -20,18 +34,12 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          // Call the backend API to validate credentials
-          const response = await axiosInstance.post(
-            "http://localhost:5000/auth/login",
-            {
-              email: credentials?.email,
-              password: credentials?.password,
-            }
-          );
+          const response = await axiosInstance.post("/auth/login", {
+            email: credentials?.email,
+            password: credentials?.password,
+          });
 
           const user = response.data;
-
-          // If the backend validates the user, return user details
           if (user) {
             return {
               id: user.id,
@@ -39,12 +47,8 @@ export const authOptions: AuthOptions = {
               name: user.name || user.email,
             };
           }
-          return null; // Return null if login fails
-        } catch (error: any) {
-          console.error(
-            "Authorize Error:",
-            error.response?.data || error.message
-          );
+          return null;
+        } catch {
           throw new Error("Login failed");
         }
       },
@@ -56,29 +60,38 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async redirect({ url, baseUrl }) {
       if (url.startsWith("/")) return url;
-      else if (new URL(url).origin === baseUrl) return url;
       return baseUrl + "/dashboard";
     },
     async session({ session, token }) {
       session.user = {
         ...session.user,
         id: token.sub as string,
+        image: token.picture || "/default-avatar.png",
       };
       return session;
     },
-    async jwt({ token, user }) {
-      // Add user ID to the JWT token
+    async jwt({ token, user, account, profile }) {
       if (user) {
-        token.sub = user.id; // Attach user ID to the token
+        token.sub = user.id;
       }
+
+      if (account?.provider === "google" && profile?.picture === "string") {
+        token.picture = profile.picture;
+      }
+
+      if (
+        account?.provider === "facebook" &&
+        typeof profile?.picture === "string"
+      ) {
+        token.picture = profile.picture;
+      }
+
       return token;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET, // A secret key for encrypting tokens
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
-// Create NextAuth handler using authOptions
 const handler = NextAuth(authOptions);
 
-// Export handlers for GET and POST requests
 export { handler as POST, handler as GET };

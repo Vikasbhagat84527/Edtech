@@ -2,9 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const courseRoutes = require("./routes/courseRoutes");
-const lessonRoutes = require("./routes/lessonRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const commentRoutes = require("./routes/commentRoutes");
+const videoRoutes = require("./routes/videoRoutes");
 const likedVideoRoutes = require("./routes/likedVideoRoutes");
 const bookmarkedVideoRoutes = require("./routes/bookmarkedVideoRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
@@ -19,14 +19,14 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // Frontend URL
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
 app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/api", courseRoutes);
-app.use("/api", lessonRoutes);
+app.use("/api", videoRoutes);
 app.use("/api", subscriptionRoutes);
 app.use("/api", commentRoutes);
 app.use("/api/likes", likedVideoRoutes);

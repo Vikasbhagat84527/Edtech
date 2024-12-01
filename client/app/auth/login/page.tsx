@@ -6,56 +6,42 @@ import { useRouter } from "next/navigation";
 import axiosInstance from "@/src/utils/axiosInstance";
 
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true); // Toggle between Login and Signup
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const { data: session, status, update } = useSession(); // Add `update` from NextAuth
+  const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Redirect to dashboard if the user is already authenticated
   useEffect(() => {
-    if (status === "authenticated") {
+    const accessToken = localStorage.getItem("accessToken");
+    if (status === "authenticated" && accessToken) {
       router.push("/dashboard");
+    } else if (status === "unauthenticated") {
+      router.push("/auth/login");
     }
   }, [status]);
 
-  // Handle form submission for both login and signup
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isLogin) {
       try {
-        // Send credentials to the backend for validation
-        const response = await axiosInstance.post(
-          "http://localhost:5000/auth/login",
-          {
-            email,
-            password,
-          }
-        );
-
-        const { accessToken, refreshToken } = response.data;
-
-        // Store tokens in localStorage
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-
-        // Use NextAuth to sign in
-        const signInResponse = await signIn("credentials", {
-          redirect: false,
+        const response = await axiosInstance.post("/auth/login", {
           email,
           password,
-          callbackUrl: "/dashboard",
         });
 
-        if (signInResponse?.error) {
-          setErrorMessage(signInResponse.error);
-        } else {
-          // Force session update to pick up the new cookies
-          await update(); // Refresh the NextAuth session
-          router.push("/dashboard"); // Redirect after successful session update
-        }
+        const { accessToken, refreshToken, name, profilePicture } =
+          response.data;
+
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("userName", name);
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("userProfilePicture", profilePicture);
+
+        router.push("/dashboard");
       } catch (error: any) {
         setErrorMessage(
           error.response?.data?.error || "Login failed. Please try again."
@@ -63,19 +49,14 @@ const AuthPage = () => {
       }
     } else {
       try {
-        // Signup logic
-        const response = await axiosInstance.post(
-          "http://localhost:5000/auth/signup",
-          {
-            email,
-            password,
-          }
-        );
+        const response = await axiosInstance.post("/auth/signup", {
+          email,
+          password,
+        });
 
-        // Handle successful signup
-        if (response.status === 200 || response.status === 201) {
+        if (response.status === 201) {
           alert("Signup successful! You can now log in.");
-          setIsLogin(true); // Switch to Login tab
+          setIsLogin(true);
         }
       } catch (error: any) {
         setErrorMessage(
@@ -85,24 +66,27 @@ const AuthPage = () => {
     }
   };
 
+  const handleFacebookLogin = () => {
+    signIn("facebook", {
+      callbackUrl: "/dashboard", // Redirect after login
+      auth_type: "reauthenticate", // Force Facebook login dialog
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      {/* Header */}
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800">Welcome to MyApp</h1>
         <p className="text-gray-600">Login or Signup to continue</p>
       </div>
-
-      {/* Form Section */}
       <div className="bg-white p-8 rounded shadow-md w-96">
-        {/* Tabs */}
         <div className="flex justify-center mb-6">
           <button
             className={`px-4 py-2 ${
               isLogin ? "font-bold border-b-2 border-blue-500" : ""
             }`}
             onClick={() => {
-              setErrorMessage(""); // Clear errors when switching tabs
+              setErrorMessage("");
               setIsLogin(true);
             }}
           >
@@ -113,15 +97,13 @@ const AuthPage = () => {
               !isLogin ? "font-bold border-b-2 border-blue-500" : ""
             }`}
             onClick={() => {
-              setErrorMessage(""); // Clear errors when switching tabs
+              setErrorMessage("");
               setIsLogin(false);
             }}
           >
             Signup
           </button>
         </div>
-
-        {/* Form */}
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <input
             type="email"
@@ -146,21 +128,20 @@ const AuthPage = () => {
             {isLogin ? "Login" : "Signup"}
           </button>
         </form>
-
-        {/* Error Message */}
         {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
-
-        {/* Social Login */}
         <div className="text-center mt-4">
           <p className="text-gray-600 mb-2">or</p>
           <button
-            onClick={() => {
-              // Use NextAuth for Google login
-              signIn("google");
-            }}
+            onClick={() => signIn("google")}
             className="bg-green-500 w-full text-white py-2 px-4 rounded hover:bg-green-800"
           >
             Sign in with Google
+          </button>
+          <button
+            onClick={handleFacebookLogin}
+            className="bg-blue-700 w-full text-white py-2 px-4 rounded hover:bg-blue-900 mt-2"
+          >
+            Sign in with Facebook
           </button>
         </div>
       </div>
