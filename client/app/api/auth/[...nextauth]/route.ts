@@ -18,13 +18,6 @@ export const authOptions: AuthOptions = {
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID as string,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
-      authorization: {
-        url: "https://www.facebook.com/v10.0/dialog/oauth",
-        params: {
-          auth_type: "reauthenticate", // Forces Facebook to show the login prompt
-          scope: "email,public_profile", // Request additional scopes as needed
-        },
-      },
     }),
     CredentialsProvider({
       name: "Credentials",

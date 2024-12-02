@@ -40,8 +40,16 @@ const AuthPage = () => {
         localStorage.setItem("userName", name);
         localStorage.setItem("userEmail", email);
         localStorage.setItem("userProfilePicture", profilePicture);
-
-        router.push("/dashboard");
+        const signInResponse = await signIn("credentials", {
+          redirect: false, // Avoid redirecting, as you're handling navigation
+          email,
+          password,
+        });
+        if (signInResponse?.error) {
+          setErrorMessage("Failed to synchronize session. Please try again.");
+        } else {
+          router.push("/dashboard");
+        }
       } catch (error: any) {
         setErrorMessage(
           error.response?.data?.error || "Login failed. Please try again."

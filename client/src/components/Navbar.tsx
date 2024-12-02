@@ -13,7 +13,8 @@ const Navbar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [profilePicture, setProfilePicture] = useState("/default-avatar.png");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -22,25 +23,30 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (status === "authenticated") {
       setIsAuthenticated(true);
+      setUserName(session?.user?.name || "User");
+      setProfilePicture(session?.user?.image || "/default-avatar.png");
     } else {
-      setIsAuthenticated(false);
+      const accessToken = localStorage.getItem("accessToken");
+      const name = localStorage.getItem("userName");
+      const picture = localStorage.getItem("userProfilePicture");
+
+      if (accessToken) {
+        setIsAuthenticated(true);
+        setUserName(name || "User");
+        setProfilePicture(picture || "/default-avatar.png");
+      } else {
+        setIsAuthenticated(false);
+      }
     }
-  }, [status]);
+  }, [status, session]);
 
   const handleSignOut = async () => {
     try {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      localStorage.clear();
       await signOut({ callbackUrl: "/auth/login" });
     } catch (error) {
       console.error("Error during sign out:", error);
     }
-  };
-
-  const extractNameInitials = (email: string | undefined) => {
-    if (!email) return "";
-    const [name] = email.split("@");
-    return name;
   };
 
   const toggleDropdown = () => {
@@ -85,7 +91,7 @@ const Navbar: React.FC = () => {
               Home
             </Link>
             <div className="relative">
-              <button onClick={toggleDropdown} className="relative">
+              <button onClick={toggleDropdown}>
                 <FaBell className="text-xl" />
                 {notifications.length > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
@@ -121,26 +127,24 @@ const Navbar: React.FC = () => {
                 </div>
               )}
             </div>
-            {pathname === "/dashboard" ? (
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-red-500 text-white px-4 py-2 rounded"
-              >
-                Logout
-              </button>
-            ) : (
-              <button
+            {pathname === "/" ? (
+              <div
                 onClick={() => router.push("/dashboard")}
-                className="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded"
+                className="flex items-center space-x-2 cursor-pointer hover:bg-gray-700 p-2 rounded"
               >
                 <img
-                  src={session?.user?.image || "/default-avatar.png"}
+                  src={profilePicture}
                   alt="User Profile"
                   className="w-8 h-8 rounded-full"
                 />
-                <span>
-                  {extractNameInitials(session?.user?.email ?? undefined)}
-                </span>
+                <span>{userName}</span>
+              </div>
+            ) : (
+              <button
+                onClick={handleSignOut}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Logout
               </button>
             )}
           </>
@@ -155,11 +159,6 @@ const Navbar: React.FC = () => {
           </>
         )}
       </div>
-      <LogoutModal
-        isOpen={isModalOpen}
-        onConfirm={handleSignOut}
-        onDiscard={() => setIsModalOpen(false)}
-      />
     </nav>
   );
 };
