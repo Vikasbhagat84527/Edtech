@@ -37,7 +37,7 @@ const SearchPage: React.FC = () => {
           .map((result) => result.item);
         setResults(fuzzyResults);
       } catch (error) {
-        console.error("Error fetching search results:", error);
+        console.log("Error fetching search results:", error);
       }
     };
 

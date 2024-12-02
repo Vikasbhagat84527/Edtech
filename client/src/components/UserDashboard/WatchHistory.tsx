@@ -33,23 +33,28 @@ const WatchHistory: React.FC = () => {
     return <p className="text-gray-600">No watch history available.</p>;
 
   return (
-    <div>
+    <div className="w-full">
       <h2 className="text-xl font-bold mb-4">Watch History</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {watchHistory.map((lesson) => (
           <Link
-            href={`/videos/watch-history`}
+            href={`/videos/watch-history/${lesson.id}`}
             key={lesson.id}
             className="group"
           >
-            <div className="relative bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition">
+            <div
+              className="relative group rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition"
+              style={{ width: "150px", height: "150px" }}
+            >
+              {/* Card image */}
               <img
                 src={lesson.thumbnail || "https://via.placeholder.com/150"}
                 alt={lesson.title}
-                className="w-full h-40 object-cover"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-center py-2 group-hover:bg-opacity-80 transition">
-                <h3 className="text-lg font-semibold">{lesson.title}</h3>
+              {/* Title overlay */}
+              <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white text-xs p-2 group-hover:bg-opacity-75 transition">
+                {lesson.title}
               </div>
             </div>
           </Link>

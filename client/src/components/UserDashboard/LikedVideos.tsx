@@ -33,18 +33,25 @@ const LikedVideos: React.FC = () => {
     return <p className="text-gray-600">No liked videos available.</p>;
 
   return (
-    <div>
+    <div className="w-full">
       <h2 className="text-xl font-bold mb-4">Liked Videos</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {likedVideos.map((video) => (
-          <Link href={`/dashboard/videos/liked`} key={video.id}>
-            <div className="bg-white shadow p-4 rounded-lg cursor-pointer">
+          <Link href={`/dashboard/videos/liked/${video.id}`} key={video.id}>
+            <div
+              className="relative group rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition"
+              style={{ width: "150px", height: "150px" }} // Fixed dimensions for cards
+            >
+              {/* Card image */}
               <img
                 src={video.thumbnail || "https://via.placeholder.com/150"}
                 alt={video.title}
-                className="w-full h-40 object-cover rounded-lg mb-2"
+                className="w-full h-full object-cover"
               />
-              <h3 className="text-lg font-semibold">{video.title}</h3>
+              {/* Title overlay */}
+              <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white text-xs p-2 group-hover:bg-opacity-75 transition">
+                {video.title}
+              </div>
             </div>
           </Link>
         ))}
