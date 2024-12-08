@@ -39,8 +39,6 @@ app.use("/api", notificationRoutes);
 app.listen(PORT, async () => {
   try {
     await prisma.$connect();
-    console.log(`Server running on port ${PORT}`);
-    console.log("Connected to database successfully");
   } catch (error) {
     console.error("Failed to connect to the database", error);
   }
