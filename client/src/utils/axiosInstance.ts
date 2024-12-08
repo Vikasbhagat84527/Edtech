@@ -1,8 +1,7 @@
 import axios from "axios";
-import { signOut } from "next-auth/react";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://edtech-2-7uho.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
@@ -46,7 +45,7 @@ axiosInstance.interceptors.response.use(
           }
 
           const response = await axios.post(
-            "http://localhost:5000/auth/refresh",
+            "https://edtech-2-7uho.onrender.com/auth/refresh",
             { refreshToken }
           );
 
@@ -64,8 +63,12 @@ axiosInstance.interceptors.response.use(
 
         if (typeof window !== "undefined") {
           localStorage.clear();
-          if (window.location.pathname !== "/auth/login") {
-            window.location.href = "/auth/login";
+          if (
+            window.location.pathname !==
+            "https://edtech-2-7uho.onrender.com/auth/login"
+          ) {
+            window.location.href =
+              "https://edtech-2-7uho.onrender.com/auth/login";
           }
         }
       }

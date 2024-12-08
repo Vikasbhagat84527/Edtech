@@ -24,7 +24,7 @@ const SearchPage: React.FC = () => {
 
       try {
         const response = await axiosInstance.get<VideoResult[]>(
-          `/api/lessons/search?search=${query}`
+          `https://edtech-2-7uho.onrender.com/api/lessons/search?search=${query}`
         );
         const fuse = new Fuse(response.data, {
           keys: ["title", "description"],

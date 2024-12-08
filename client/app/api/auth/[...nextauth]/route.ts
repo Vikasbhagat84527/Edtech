@@ -27,10 +27,13 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          const response = await axiosInstance.post("/auth/login", {
-            email: credentials?.email,
-            password: credentials?.password,
-          });
+          const response = await axiosInstance.post(
+            "/*https://edtech-2-7uho.onrender.com/auth/login",
+            {
+              email: credentials?.email,
+              password: credentials?.password,
+            }
+          );
 
           const user = response.data;
           if (user) {
@@ -48,7 +51,7 @@ export const authOptions: AuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/auth/login",
+    signIn: "https://edtech-2-7uho.onrender.com/auth/login",
   },
   callbacks: {
     async redirect({ url, baseUrl }) {

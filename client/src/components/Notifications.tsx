@@ -19,7 +19,9 @@ const Notifications: React.FC = () => {
     if (status === "authenticated") {
       const fetchNotifications = async () => {
         try {
-          const { data } = await axiosInstance.get("/api/notifications/unread");
+          const { data } = await axiosInstance.get(
+            "https://edtech-2-7uho.onrender.com/api/notifications/unread"
+          );
           setNotifications(data.notifications);
         } catch (error) {
           console.error("Failed to fetch notifications:", error);

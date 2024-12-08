@@ -17,7 +17,9 @@ const LikedVideos: React.FC = () => {
   useEffect(() => {
     const fetchLikedVideos = async () => {
       try {
-        const { data } = await axiosInstance.get(`/api/likes/1/liked-videos`);
+        const { data } = await axiosInstance.get(
+          `https://edtech-2-7uho.onrender.com/api/likes/1/liked-videos`
+        );
         setLikedVideos(data || []);
       } catch (err) {
         console.error("Error fetching liked videos:", err);
@@ -37,7 +39,10 @@ const LikedVideos: React.FC = () => {
       <h2 className="text-xl font-bold mb-4">Liked Videos</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {likedVideos.map((video) => (
-          <Link href={`/dashboard/videos/liked/${video.id}`} key={video.id}>
+          <Link
+            href={`https://edtech-2-7uho.onrender.com/dashboard/videos/liked/${video.id}`}
+            key={video.id}
+          >
             <div
               className="relative group rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition"
               style={{ width: "150px", height: "150px" }} // Fixed dimensions for cards

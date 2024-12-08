@@ -5,7 +5,6 @@ import { useSession, signOut } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaBell } from "react-icons/fa";
-import LogoutModal from "./LogoutModal";
 import { useNotifications, Notification } from "@/src/hooks/useNotifications";
 
 const Navbar: React.FC = () => {
@@ -43,7 +42,9 @@ const Navbar: React.FC = () => {
   const handleSignOut = async () => {
     try {
       localStorage.clear();
-      await signOut({ callbackUrl: "/auth/login" });
+      await signOut({
+        callbackUrl: "https://edtech-2-7uho.onrender.com/auth/login",
+      });
     } catch (error) {
       console.error("Error during sign out:", error);
     }
@@ -129,7 +130,9 @@ const Navbar: React.FC = () => {
             </div>
             {pathname === "/" ? (
               <div
-                onClick={() => router.push("/dashboard")}
+                onClick={() =>
+                  router.push("https://edtech-2-7uho.onrender.com/dashboard")
+                }
                 className="flex items-center space-x-2 cursor-pointer hover:bg-gray-700 p-2 rounded"
               >
                 <img

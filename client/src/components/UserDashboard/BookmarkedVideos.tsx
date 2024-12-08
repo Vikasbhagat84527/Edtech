@@ -17,7 +17,9 @@ const BookmarkedVideos: React.FC = () => {
   useEffect(() => {
     const fetchBookmarkedVideos = async () => {
       try {
-        const { data } = await axiosInstance.get(`/api/1/bookmarked-videos`);
+        const { data } = await axiosInstance.get(
+          `https://edtech-2-7uho.onrender.com/api/1/bookmarked-videos`
+        );
         setBookmarkedVideos(data || []);
       } catch (err) {
         console.error("Error fetching bookmarked videos:", err);
@@ -38,7 +40,7 @@ const BookmarkedVideos: React.FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {bookmarkedVideos.map((video) => (
           <Link
-            href={`/dashboard/videos/bookmarked/${video.id}`}
+            href={`https://edtech-2-7uho.onrender.com/dashboard/videos/bookmarked/${video.id}`}
             key={video.id}
           >
             <div

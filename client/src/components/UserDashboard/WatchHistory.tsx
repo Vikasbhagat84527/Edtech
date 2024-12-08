@@ -13,11 +13,12 @@ interface Lesson {
 const WatchHistory: React.FC = () => {
   const [watchHistory, setWatchHistory] = useState<Lesson[]>([]);
   const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchWatchHistory = async () => {
       try {
-        const { data } = await axiosInstance.get(`/api/watch-history/1`);
+        const { data } = await axiosInstance.get(
+          `https://edtech-2-7uho.onrender.com/api/watch-history/1`
+        );
         setWatchHistory(data.watchHistory || []);
       } catch (err) {
         console.error("Error fetching watch history:", err);
@@ -38,7 +39,7 @@ const WatchHistory: React.FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {watchHistory.map((lesson) => (
           <Link
-            href={`/videos/watch-history/${lesson.id}`}
+            href={`https://edtech-2-7uho.onrender.com/videos/watch-history/${lesson.id}`}
             key={lesson.id}
             className="group"
           >

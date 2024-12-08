@@ -17,7 +17,9 @@ export const useNotifications = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const { data } = await axiosInstance.get("api/notifications/unread");
+        const { data } = await axiosInstance.get(
+          "https://edtech-2-7uho.onrender.com/api/notifications/unread"
+        );
         setNotifications(data.notifications || []);
       } catch (err) {
         setError("Failed to fetch notifications");

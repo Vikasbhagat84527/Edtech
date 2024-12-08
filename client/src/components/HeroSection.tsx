@@ -10,7 +10,11 @@ const HeroSection: React.FC = () => {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
+      router.push(
+        `https://edtech-2-7uho.onrender.com/search?query=${encodeURIComponent(
+          searchQuery
+        )}`
+      );
     }
   };
 

@@ -16,9 +16,9 @@ const AuthPage = () => {
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     if (status === "authenticated" && accessToken) {
-      router.push("/dashboard");
+      router.push("https://edtech-2-7uho.onrender.com/dashboard");
     } else if (status === "unauthenticated") {
-      router.push("/auth/login");
+      router.push("https://edtech-2-7uho.onrender.com/auth/login");
     }
   }, [status]);
 
@@ -27,10 +27,13 @@ const AuthPage = () => {
 
     if (isLogin) {
       try {
-        const response = await axiosInstance.post("/auth/login", {
-          email,
-          password,
-        });
+        const response = await axiosInstance.post(
+          "https://edtech-2-7uho.onrender.com/auth/login",
+          {
+            email,
+            password,
+          }
+        );
 
         const { accessToken, refreshToken, name, profilePicture } =
           response.data;
@@ -41,14 +44,14 @@ const AuthPage = () => {
         localStorage.setItem("userEmail", email);
         localStorage.setItem("userProfilePicture", profilePicture);
         const signInResponse = await signIn("credentials", {
-          redirect: false, // Avoid redirecting, as you're handling navigation
+          redirect: false,
           email,
           password,
         });
         if (signInResponse?.error) {
           setErrorMessage("Failed to synchronize session. Please try again.");
         } else {
-          router.push("/dashboard");
+          router.push("https://edtech-2-7uho.onrender.com/dashboard");
         }
       } catch (error: any) {
         setErrorMessage(
@@ -57,10 +60,13 @@ const AuthPage = () => {
       }
     } else {
       try {
-        const response = await axiosInstance.post("/auth/signup", {
-          email,
-          password,
-        });
+        const response = await axiosInstance.post(
+          "https://edtech-2-7uho.onrender.com/auth/signup",
+          {
+            email,
+            password,
+          }
+        );
 
         if (response.status === 201) {
           alert("Signup successful! You can now log in.");
@@ -76,8 +82,8 @@ const AuthPage = () => {
 
   const handleFacebookLogin = () => {
     signIn("facebook", {
-      callbackUrl: "/dashboard", // Redirect after login
-      auth_type: "reauthenticate", // Force Facebook login dialog
+      callbackUrl: "https://edtech-2-7uho.onrender.com/dashboard",
+      auth_type: "reauthenticate",
     });
   };
 

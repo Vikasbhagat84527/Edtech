@@ -11,6 +11,6 @@ declare module "next-auth" {
   }
 
   interface User {
-    id: string; // Add `id` to User object
+    id: string;
   }
 }
