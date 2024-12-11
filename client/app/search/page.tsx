@@ -11,7 +11,7 @@ interface VideoResult {
   description: string;
 }
 
-const SearchPage: React.FC = () => {
+const SearchPageContent: React.FC = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("query")?.toLowerCase();
   const [results, setResults] = useState<VideoResult[]>([]);
@@ -110,4 +110,4 @@ const SearchPage: React.FC = () => {
   );
 };
 
-export default SearchPage;
+export default SearchPageContent;
